@@ -1,0 +1,23 @@
+
+### Platform
+node_modules/
+npm-debug.log*
+bower_components
+typings
+.tscache
+
+### Build destination
+build/
+dist/
+out/
+gen/
+
+### Common
+logs/
+storage/
+*.log
+*.secret/
+*.secret.*
+
+### IDEs
+.idea/
