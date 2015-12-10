@@ -1,18 +1,19 @@
 
-var Badb = require('../..').Badb;
+process.chdir(__dirname);
 
-Badb.start();
+(function() {
+    'use strict';
+
+
+
+}());
 
 //try {
 //
-//    var Kabuto = require('kabuto');
+//} catch() {
 //
-//    Kabuto.start();
-//
-//} catch(e) {
-//    console.log(e);
-//    console.error('You need a \'kabuto\' module installed in the same directory as your app.');
-//    console.error('To do that, run \'npm install kabuto\'');
 //}
-
-
+//
+//var Badb = require('../..').Badb;
+//
+//Badb.start();

@@ -1,6 +1,10 @@
 
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
+
+import {RC} from './rc';
+import {Enumeration} from '../_utils/enumeration';
+import {TObject} from '../_utils/tobject';
 
 
 /*
@@ -51,38 +55,19 @@ export class Config {
      * @param rcFilename
      */
     public constructor(rcFilename: string = Config.RC_FILENAME) {
-        this.rc = this.initRC(rcFilename);
+        this.rc = TObject.extend(defaultRunConfig, RC.parse(rcFilename));
         this.env = this.getEnvConfig();
         this.http = this.getConfig('http', defaultHttpConfig);
     }
 
-    private initRC(filename: string): RunConfig {
-
-        var config: RunConfig = _clone(defaultRunConfig);
-
-        fs.readFileSync(Config.getPath(filename), 'utf8').split('\n').forEach((line: string) => {
-
-            if(line.trim() !== '' && line[0] !== '#') {
-                var parts: string[] = line.split('=');
-                if(parts.length === 2) {
-                    config[parts[0].trim()] = parts[1].trim();
-                }
-            }
-
-        });
-
-        return config;
-    }
-
     private getConfig<T>(name: string, defaultConfig: T): T {
         var config = require(Config.getPath(Config.CONFIG_DIR + '/' + name));
-        config = _extend(config, this.env[name]);
-        return _extend(_clone(defaultConfig), config);
+        config = TObject.extend(config, this.env[name]);
+        return TObject.extend(TObject.clone(defaultConfig), config);
     }
 
     private getEnvConfig(): Object {
-        var env = Environment[Environment[this.rc.ENV]];
-        return require(Config.getPath(Config.CONFIG_DIR + '/' + 'env/' + env.toLowerCase()));
+        return require(Config.getPath(Config.CONFIG_DIR + '/' + 'env/' + Enumeration.getKey(Environment, this.rc.ENV).toLowerCase()));
     }
 
     private static getPath(paths: string): string {
@@ -90,40 +75,3 @@ export class Config {
     }
 
 }
-
-//TODO: esto se tiene que abstraer a una biblioteca de utilidades
-function _clone<T>(obj: T): T {
-
-    var copy: any = {};
-    for(var i in obj) {
-        if(obj.hasOwnProperty(i)) {
-            copy[i] = obj[i];
-        }
-    }
-
-    return copy;
-}
-
-//TODO: esto se tiene que abstraer a una biblioteca de utilidades
-function _extend<T>(obj1: T, obj2: Object): T {
-
-    for(var i in obj2) {
-        if(obj2.hasOwnProperty(i)) {
-            obj1[i] = obj2[i];
-        }
-    }
-
-    return obj1;
-}
-
-//function _getEnumName(enumeration, v) {
-//
-//    console.log(enumeration);
-//
-//    for(var i in enumeration) {
-//        if(enumeration.hasOwnProperty(i) && enumeration[i] === v) {
-//            return i;
-//        }
-//    }
-//
-//}
