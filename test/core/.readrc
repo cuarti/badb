@@ -1,0 +1,8 @@
+
+#This is a comment
+
+INT = 5
+FLOAT = 4.12
+STRING = HELLO_WORLD
+BOOLEAN = FALsSE
+

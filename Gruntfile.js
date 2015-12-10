@@ -10,6 +10,14 @@ module.exports = function(grunt) {
             }
         },
         ts: {
+            dev: {
+                src: ['lib/**/*.ts', '!lib/**/*.d.ts'],
+                tsconfig: true,
+                options: {
+                    declaration: false,
+                    sourceMap: false
+                }
+            },
             build: {
                 src: ['lib/**/*.ts', '!lib/**/*.d.ts'],
                 tsconfig: true
@@ -18,7 +26,7 @@ module.exports = function(grunt) {
         watch: {
             dev: {
                 files: ['lib/**/*.ts', '!lib/**/*.d.ts'],
-                tasks: ['ts:build'],
+                tasks: ['ts:dev'],
                 options: {
                     spawn: false,
                     interrupt: true
@@ -33,6 +41,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-newer');
 
     grunt.registerTask('build', ['clean:build', 'ts:build']);
-    grunt.registerTask('default', ['build', 'newer:watch:dev']);
+    grunt.registerTask('dev', ['clean:build', 'ts:dev']);
+    grunt.registerTask('default', ['dev', 'newer:watch:dev']);
 
 };
