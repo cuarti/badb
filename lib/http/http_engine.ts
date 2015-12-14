@@ -1,12 +1,13 @@
 
-import {Config} from '../core/config';
+import {HttpConfig} from '../core/config';
 
 export interface HttpEngine {
 
-    listening: boolean;
+    running: boolean;
+    config: HttpConfig;
 
-    isListening(): boolean;
-    start(config: Config): void;
+    isRunning(): boolean;
+    start(): void;
     close(): void;
 
 }

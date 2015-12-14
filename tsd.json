@@ -6,19 +6,31 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "node/node.d.ts": {
-      "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
+      "commit": "f8af639bf29b2b00e5d27ce93c0f046564b8525c"
     },
     "es6-collections/es6-collections.d.ts": {
       "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
     },
     "express/express.d.ts": {
-      "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
+      "commit": "f8af639bf29b2b00e5d27ce93c0f046564b8525c"
     },
     "serve-static/serve-static.d.ts": {
-      "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
+      "commit": "f8af639bf29b2b00e5d27ce93c0f046564b8525c"
     },
     "mime/mime.d.ts": {
-      "commit": "e5a27ea95e47b95333784f1f0d590127b4e39a89"
+      "commit": "f8af639bf29b2b00e5d27ce93c0f046564b8525c"
+    },
+    "debug/debug.d.ts": {
+      "commit": "f8af639bf29b2b00e5d27ce93c0f046564b8525c"
+    },
+    "body-parser/body-parser.d.ts": {
+      "commit": "f8af639bf29b2b00e5d27ce93c0f046564b8525c"
+    },
+    "cookie-parser/cookie-parser.d.ts": {
+      "commit": "f8af639bf29b2b00e5d27ce93c0f046564b8525c"
+    },
+    "morgan/morgan.d.ts": {
+      "commit": "f8af639bf29b2b00e5d27ce93c0f046564b8525c"
     }
   }
 }
