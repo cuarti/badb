@@ -1,33 +1,43 @@
 
 import {Config} from './config';
 import {HttpEngine} from '../http/http_engine';
-import {ExpressEngine} from '../http/express_engine';
+import {ExpressEngine} from '../_express/express_engine';
+import {Loader} from '../core/loader';
 
 
+/**
+ *
+ */
 export class Badb {
-
-    private static instance: Badb;
 
     public config: Config;
     public server: HttpEngine;
 
-    constructor() {
+    //public serve(config?: Config): void {
+    public serve(): void {
 
-        if(Badb.instance) {
-            throw new Error('Error: Instantiation failed: Use Badb.getInstance() instead of new.');
-        }
+        this.config = Config.init();
 
-        this.config = new Config();
-        this.server = new ExpressEngine();
-    }
+        console.log(this.config);
 
-    //public static start(config?): void {
-    public static start(): void {
+        //let loader = Loader.init({
+        //    baseURL: Config.ROOT + '/api',
+        //    transpiler: 'typescript',
+        //    typescriptOptions: {
+        //        emitDecoratorMetadata: true,
+        //        experimentalDecorators: true
+        //    },
+        //    packages: {
+        //        '/': {defaultExtension: 'ts'}
+        //    }
+        //});
+        //
+        //loader.interpret('http/controllers/foo');
 
-        var badb = this.instance = new Badb();
+        this.server = new ExpressEngine(this.config.http);
 
         try {
-            badb.server.start(badb.config);
+            this.server.start();
         } catch(e) {
             console.error(e);
         }

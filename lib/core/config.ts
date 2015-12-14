@@ -1,10 +1,9 @@
 
-import * as fs from 'fs';
-import * as path from 'path';
+import {join} from 'path';
 
-import {RC} from './rc';
-import {Enumeration} from '../_utils/enumeration';
-import {TObject} from '../_utils/tobject';
+import {parseRC} from './rc';
+import {enumKey, enumValue} from '../_utils/enumeration';
+import {extend} from '../_utils/object';
 
 
 /*
@@ -13,17 +12,13 @@ import {TObject} from '../_utils/tobject';
 export enum Environment {
     DEVELOPMENT,
     PRODUCTION
-    //DEVELOPMENT = 'DEVELOPMENT',
-    //PRODUCTION = 'PRODUCTION'
 }
 
 export interface RunConfig {
     ENV: Environment;
+    MAINTENANCE: boolean;
+    CONFIG_PATH: string;
 }
-
-export const defaultRunConfig: RunConfig = {
-    ENV: Environment.DEVELOPMENT
-};
 
 /*
  * Http
@@ -32,10 +27,6 @@ export interface HttpConfig {
     port: number
 }
 
-export const defaultHttpConfig: HttpConfig = {
-    port: 80
-};
-
 
 /**
  *
@@ -43,35 +34,68 @@ export const defaultHttpConfig: HttpConfig = {
 export class Config {
 
     public static RC_FILENAME = '.badbrc';
-    public static CONFIG_DIR = 'config';
+    public static ROOT = process.cwd();
 
-    private env: Object;
+    public rc: RunConfig = {
+        ENV: Environment.DEVELOPMENT,
+        MAINTENANCE: false,
+        CONFIG_PATH: 'config'
+    };
 
-    public rc: RunConfig;
-    public http: HttpConfig;
+    public http: HttpConfig = {
+        port: 3000
+    };
+
+    public constructor(rc) {
+        rc.ENV = enumValue(Environment, rc.ENV);
+        extend(this.rc, rc);
+    }
 
     /**
+     * Init configuration
      *
-     * @param rcFilename
+     * @param {string} [rcFilename = '.badbrc']
+     * @returns {Config}
      */
-    public constructor(rcFilename: string = Config.RC_FILENAME) {
-        this.rc = TObject.extend(defaultRunConfig, RC.parse(rcFilename));
-        this.env = this.getEnvConfig();
-        this.http = this.getConfig('http', defaultHttpConfig);
-    }
+    public static init(rcFilename: string = Config.RC_FILENAME): Config {
 
-    private getConfig<T>(name: string, defaultConfig: T): T {
-        var config = require(Config.getPath(Config.CONFIG_DIR + '/' + name));
-        config = TObject.extend(config, this.env[name]);
-        return TObject.extend(TObject.clone(defaultConfig), config);
-    }
+        let config: Config = new Config(parseRC(rcFilename));
+        let envName: string = enumKey(Environment, config.rc.ENV).toLowerCase();
+        let env: any = _readConfigFile('env', envName);
 
-    private getEnvConfig(): Object {
-        return require(Config.getPath(Config.CONFIG_DIR + '/' + 'env/' + Enumeration.getKey(Environment, this.rc.ENV).toLowerCase()));
-    }
+        _initConfigModule('http');
 
-    private static getPath(paths: string): string {
-        return path.join(path.dirname(process.argv[1]), paths);
+        return config;
+
+        /**
+         * Init a config module
+         *
+         * @param {string} name name of config module
+         * @private
+         */
+        function _initConfigModule(name: string): void {
+
+            extend(config[name], extend(_readConfigFile(name), env[name] || {}));
+        }
+
+        /**
+         * Read config file
+         *
+         * @param {...string} paths
+         * @returns {Object}
+         * @private
+         */
+        function _readConfigFile(...paths): any {
+
+            try {
+                let cfg: any = require(join.apply(null, [Config.ROOT, config.rc.CONFIG_PATH].concat(paths)));
+                return typeof cfg === 'object' ? cfg : {};
+
+            } catch(e) {
+                return {};
+            }
+        }
+
     }
 
 }
